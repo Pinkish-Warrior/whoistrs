@@ -1,0 +1,17 @@
+# Core API framework
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+
+# Configuration
+python-dotenv>=1.0.1
+
+# RAG pipeline
+chromadb>=0.5.0
+sentence-transformers>=3.0.0
+langchain-text-splitters>=0.3.0
+
+# LLM
+anthropic>=0.36.0
+
+# After running `pip install -r requirements.txt` inside your venv,
+# run `pip freeze > requirements.txt` to lock exact versions.
