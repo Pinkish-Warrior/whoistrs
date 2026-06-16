@@ -26,19 +26,31 @@ Since December 2023 Tania has worked as a Coding Assistant and Technical Mentor 
 
 Earning a mentorship position at 01Founders — after being named Student of the Year — reflects the same pattern: she learns quickly, applies what she learns in production projects, and then teaches it to others. Teaching forces full internalisation of a concept, and it also means she communicates technical decisions clearly, a skill that matters as much in collaborative engineering as in the classroom.
 
-## Projects
+## 01Founders Curriculum Projects
 
-Tania has shipped a range of projects that demonstrate full-stack ownership and deliberate stack choices.
+As part of the 01Founders programme, Tania has built and shipped a range of projects that demonstrate full-stack breadth and deliberate engineering choices.
 
 The Gmail MCP Server is a Python-based Model Context Protocol server that lets AI assistants interact with Gmail using OAuth 2.0. It reads unread emails and creates draft replies, demonstrating integration with Google APIs and the MCP standard for AI tooling.
 
 X-PilotLab is a Node.js CLI for controlling drones over UDP. It handles takeoff, landing, movement, and rotation in real-time and includes mission scripting for automated flight patterns — a real-time systems project requiring precise low-level protocol handling.
 
-The Chaikin Algorithm is a Rust implementation of a mathematical curve-smoothing technique. Tania built it to demonstrate she can pick up systems-level languages and apply non-trivial algorithms out  side familiar web patterns.
+The Chaikin Algorithm is a Rust implementation of a mathematical curve-smoothing technique, demonstrating that she can pick up systems-level languages and apply non-trivial algorithms outside familiar web patterns.
 
 The Web Forum is a Go application with image uploads and 20MB server-side validation, deployed with Docker. The GraphQL Dashboard is a profile page with JWT authentication that pulls data via GraphQL and renders statistics as custom SVG charts. Groupie Tracker is a Go website that fetches and displays artist and concert data from multiple APIs using custom client-server event handling.
 
 All projects are available on GitHub at github.com/Pinkish-Warrior.
+
+## Independent Projects
+
+Independently of her coursework, Tania has designed and shipped a set of projects that each reflect a deliberate architectural decision and full ownership from idea to production.
+
+GitHandshake is a full-stack TypeScript onboarding platform built as a Turborepo monorepo with a Next.js 14 frontend and NestJS backend, backed by Neon PostgreSQL and deployed on Render — with cold-start handling and retry logic for production reliability.
+
+Her passive OSINT CLI aggregates publicly available domain intelligence (DNS, WHOIS, certificate transparency logs) in Python without triggering server-side access logs on the target, built with a conscious awareness of responsible use.
+
+Interview Coach is a Cloudflare Worker that proxies Claude API calls so the API key never reaches the browser, with rate limiting baked in. MediaSense Anagram is a word-game web app. Lychee App is a full-stack project demonstrating end-to-end delivery. Her Rust game server uses Tokio for async concurrency and handles real-time multiplayer state under load.
+
+All independent projects are available on GitHub at github.com/Pinkish-Warrior.
 
 ## Operational Background
 

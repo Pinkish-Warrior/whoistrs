@@ -5,5 +5,8 @@ compatibility_date = "2024-01-01"
 [triggers]
 crons = ["*/10 * * * *"]
 
-# Environment variables — set secrets via `wrangler secret put` or the Cloudflare dashboard.
-# Never put ANTHROPIC_API_KEY or BACKEND_URL values in this file.
+# Secrets — set via `wrangler secret put BACKEND_URL` (never commit values here)
+
+[[kv_namespaces]]
+binding = "WHOISTRS_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
