@@ -1,0 +1,349 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:       #0c0c0f;
+  --border:   #1a1a24;
+  --text:     #c9d1d9;
+  --dim:      #4b5563;
+  --green:    #4ade80;
+  --teal:     #2dd4bf;
+  --teal-bg:  rgba(45, 212, 191, 0.08);
+  --teal-rim: rgba(45, 212, 191, 0.18);
+  --font:     'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.75;
+  overflow: hidden;
+}
+
+/* Subtle scanlines */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.025) 2px,
+    rgba(0, 0, 0, 0.025) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Layout ─────────────────────────────── */
+
+.terminal {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* ── Header ─────────────────────────────── */
+
+.terminal-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding: 1.25rem 0 1rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.terminal-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.08em;
+}
+
+.terminal-meta {
+  font-size: 0.72rem;
+  color: var(--dim);
+}
+
+/* ── Chat window ─────────────────────────── */
+
+.chat-window {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.75rem 0 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.chat-window::-webkit-scrollbar { width: 3px; }
+.chat-window::-webkit-scrollbar-thumb { background: var(--border); }
+
+/* ── Welcome / boot screen ───────────────── */
+
+.boot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: var(--dim);
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.boot-line { display: flex; gap: 0.6rem; }
+.boot-prompt { color: var(--dim); }
+.boot-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0.75rem 0;
+}
+
+/* ── Suggested questions ─────────────────── */
+
+.suggested-label {
+  font-size: 0.68rem;
+  color: var(--dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.suggested-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.suggested-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--dim);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.3rem 0;
+  text-align: left;
+  transition: color 0.12s;
+}
+
+.suggested-item:hover { color: var(--green); }
+
+.suggested-idx {
+  font-size: 0.68rem;
+  width: 3ch;
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+/* ── Messages ────────────────────────────── */
+
+.message { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.message-row {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+}
+
+.msg-prompt {
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-weight: 700;
+  user-select: none;
+}
+
+.msg-prompt.user   { color: var(--green); }
+.msg-prompt.system { color: var(--dim); }
+
+.msg-content {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.msg-content.user { color: var(--green); }
+.msg-content.assistant { color: var(--text); }
+
+/* ── Cursor ──────────────────────────────── */
+
+.cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.95em;
+  background: var(--teal);
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ── Source pills ────────────────────────── */
+
+.sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding-left: calc(0.9rem + 1ch);
+}
+
+.source-pill {
+  font-size: 0.68rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 2px;
+  background: var(--teal-bg);
+  color: var(--teal);
+  border: 1px solid var(--teal-rim);
+  letter-spacing: 0.04em;
+}
+
+/* ── Loading ─────────────────────────────── */
+
+.loading-row {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+  color: var(--dim);
+  font-size: 0.85rem;
+}
+
+/* ── Input bar ───────────────────────────── */
+
+.input-bar {
+  border-top: 1px solid var(--border);
+  padding: 1rem 0 1.4rem;
+  flex-shrink: 0;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.input-prompt {
+  color: var(--green);
+  font-weight: 700;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.input-field {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--green);
+  font-family: var(--font);
+  font-size: 14px;
+  caret-color: var(--teal);
+}
+
+.input-field::placeholder { color: var(--dim); }
+.input-field:disabled { opacity: 0.35; }
+
+.input-hint {
+  font-size: 0.68rem;
+  color: var(--dim);
+  flex-shrink: 0;
+}
+
+/* ── Export button ───────────────────────── */
+
+.export-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--teal);
+  font-family: var(--font);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.12s;
+}
+
+.export-btn:hover { opacity: 0.7; }
+
+/* ── Email gate ──────────────────────────── */
+
+.gate {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.gate-logo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.08em;
+  margin-bottom: 2rem;
+}
+
+.gate-label {
+  font-size: 0.78rem;
+  color: var(--dim);
+  margin-bottom: 0.75rem;
+}
+
+.gate-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+.gate-field {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--green);
+  font-family: var(--font);
+  font-size: 14px;
+  caret-color: var(--teal);
+}
+
+.gate-field::placeholder { color: var(--dim); }
+.gate-field:disabled { opacity: 0.35; }
+
+.gate-error {
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+  color: #f87171;
+  padding-left: calc(0.9rem + 1ch);
+}
+
+.gate-hint {
+  margin-top: 0.5rem;
+  font-size: 0.68rem;
+  color: var(--dim);
+  padding-left: calc(0.9rem + 1ch);
+}
