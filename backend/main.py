@@ -1,3 +1,4 @@
+import logging
 import os
 
 from fastapi import FastAPI, HTTPException
@@ -51,6 +52,7 @@ def handle_query(body: QueryRequest) -> QueryResponse:
     try:
         result: RAGResponse = query(body.question)
     except Exception as e:
+        logging.exception("Query error: %s", e)
         raise HTTPException(status_code=500, detail="Query failed. Please try again.") from e
 
     return QueryResponse(answer=result.answer, sources=result.sources)
