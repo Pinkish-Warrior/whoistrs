@@ -2,8 +2,8 @@
 .env
 *.env
 
-# Chroma (regenerate locally with ingest.py — commit once KB is stable)
-backend/chroma_db/
+# Chroma — committed to avoid re-embedding on Railway deploy
+# backend/chroma_db/
 
 # Python
 __pycache__/
