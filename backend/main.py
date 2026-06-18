@@ -1,5 +1,7 @@
 import logging
 import os
+import sys
+import traceback
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -52,7 +54,8 @@ def handle_query(body: QueryRequest) -> QueryResponse:
     try:
         result: RAGResponse = query(body.question)
     except Exception as e:
-        logging.exception("Query error: %s", e)
+        print(f"QUERY ERROR: {e}", file=sys.stderr, flush=True)
+        traceback.print_exc(file=sys.stderr)
         raise HTTPException(status_code=500, detail="Query failed. Please try again.") from e
 
     return QueryResponse(answer=result.answer, sources=result.sources)
