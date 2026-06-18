@@ -5,10 +5,31 @@ export interface QueryResponse {
 
 const WORKER_URL = import.meta.env.VITE_WORKER_URL ?? 'http://localhost:8001';
 
-export async function queryWorker(question: string): Promise<QueryResponse> {
-  const res = await fetch(`${WORKER_URL}/query`, {
+export async function authenticate(email: string): Promise<string> {
+  const res = await fetch(`${WORKER_URL}/auth`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error ?? `Auth failed (${res.status})`);
+  }
+
+  return data.token as string;
+}
+
+export async function queryWorker(question: string): Promise<QueryResponse> {
+  const token = sessionStorage.getItem('whoistrs_session') ?? '';
+
+  const res = await fetch(`${WORKER_URL}/query`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Session-Token': token,
+    },
     body: JSON.stringify({ question }),
   });
 

@@ -4,6 +4,13 @@
 
 const RATE_LIMIT_REQUESTS = 15;
 const RATE_LIMIT_WINDOW_SECONDS = 3600;
+const SESSION_TTL_SECONDS = 86400; // 24 hours
+
+const FREE_EMAIL_DOMAINS = new Set([
+  "gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "icloud.com",
+  "me.com", "aol.com", "protonmail.com", "proton.me", "live.com",
+  "msn.com", "ymail.com", "googlemail.com",
+]);
 
 export default {
   async fetch(request, env) {
@@ -15,6 +22,10 @@ export default {
 
     if (request.method === "GET" && url.pathname === "/health") {
       return corsResponse(JSON.stringify({ status: "ok" }), 200);
+    }
+
+    if (request.method === "POST" && url.pathname === "/auth") {
+      return handleAuth(request, env);
     }
 
     if (request.method === "POST" && url.pathname === "/query") {
@@ -34,7 +45,48 @@ export default {
   },
 };
 
+async function handleAuth(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return corsResponse(JSON.stringify({ error: "Invalid JSON body." }), 400);
+  }
+
+  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+  const atIdx = email.lastIndexOf("@");
+  if (atIdx < 1 || !email.slice(atIdx + 1).includes(".")) {
+    return corsResponse(JSON.stringify({ error: "Invalid email address." }), 400);
+  }
+  const domain = email.slice(atIdx + 1);
+
+  if (FREE_EMAIL_DOMAINS.has(domain)) {
+    return corsResponse(
+      JSON.stringify({ error: "Please use a work email — personal domains are not accepted." }),
+      400
+    );
+  }
+
+  const token = crypto.randomUUID();
+  const record = JSON.stringify({ email, domain, createdAt: new Date().toISOString() });
+  await env.WHOISTRS_KV.put(`session:${token}`, record, { expirationTtl: SESSION_TTL_SECONDS });
+
+  return corsResponse(JSON.stringify({ token }), 200);
+}
+
 async function handleQuery(request, env) {
+  const token = request.headers.get("X-Session-Token") ?? "";
+  if (!token) {
+    return corsResponse(JSON.stringify({ error: "Unauthorized." }), 401);
+  }
+  const session = await env.WHOISTRS_KV.get(`session:${token}`);
+  if (!session) {
+    return corsResponse(
+      JSON.stringify({ error: "Session expired or invalid. Please refresh and re-enter your email." }),
+      401
+    );
+  }
+
   const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
 
   const allowed = await checkRateLimit(env.WHOISTRS_KV, `rl:${ip}`);
@@ -105,7 +157,7 @@ function corsResponse(body, status) {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, X-Session-Token",
   };
   return new Response(body, { status, headers });
 }
