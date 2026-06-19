@@ -71,6 +71,7 @@ export default function EmailGate({ onAuthenticated }: Props) {
         <div className="gate-hint">
           {loading ? 'authenticating...' : 'press enter to continue'}
         </div>
+        <div className="gate-info">15 questions per hour</div>
       </form>
     </div>
   );

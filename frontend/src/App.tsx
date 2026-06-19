@@ -17,6 +17,9 @@ export default function App() {
   const [sessionEmail, setSessionEmail] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [questionsUsed, setQuestionsUsed] = useState(0);
+
+  const RATE_LIMIT = 15;
 
   const handleAuthenticated = useCallback((email: string, token: string) => {
     sessionStorage.setItem('whoistrs_session', token);
@@ -24,6 +27,7 @@ export default function App() {
   }, []);
 
   const handleQuery = useCallback(async (question: string) => {
+    setQuestionsUsed(prev => prev + 1);
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
       role: 'user',
@@ -64,12 +68,19 @@ export default function App() {
   }
 
   const hasResponse = messages.some(m => m.role === 'assistant');
+  const remaining = RATE_LIMIT - questionsUsed;
+  const rateClass = questionsUsed >= RATE_LIMIT
+    ? 'rate-counter--exhausted'
+    : remaining <= 5
+      ? 'rate-counter--warning'
+      : '';
 
   return (
     <div className="terminal">
       <header className="terminal-header">
         <span className="terminal-title">whoistrs</span>
         <span className="terminal-meta">$ profile assistant · London, UK</span>
+        <span className={`rate-counter ${rateClass}`}>{questionsUsed} / {RATE_LIMIT}</span>
         {hasResponse && (
           <button
             className="export-btn"

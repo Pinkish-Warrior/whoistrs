@@ -9,6 +9,18 @@ from langchain_text_splitters import MarkdownHeaderTextSplitter
 from config import CHROMA_PATH, EMBEDDING_MODEL
 
 KNOWLEDGE_BASE_PATH = Path(__file__).parent / "knowledge_base"
+KB_ROOT = str(KNOWLEDGE_BASE_PATH.resolve())
+
+_SAFE_FILENAME_RE = re.compile(r'^[\w\-]+\.md$')
+
+
+def safe_kb_path(filename: str) -> str:
+    if not _SAFE_FILENAME_RE.match(filename):
+        raise ValueError(f"Invalid knowledge base filename: {filename!r}")
+    resolved = os.path.realpath(os.path.join(KB_ROOT, filename))
+    if not resolved.startswith(KB_ROOT + os.sep):
+        raise ValueError("Path traversal detected")
+    return resolved
 
 CHUNK_SIZE = 400
 CHUNK_OVERLAP = 50

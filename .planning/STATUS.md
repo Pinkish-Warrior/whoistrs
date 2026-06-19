@@ -11,11 +11,13 @@
 | 4 | `backend/main.py` | Done — `/query` + `/health`, validation passing |
 | 5 | `worker/index.js` | Done — rate limiting, keep-warm, CORS |
 | 6 | Frontend core | Done — terminal UI, typewriter, source pills |
-| 7 | Email gate + transcript download | **Next** |
+| 7 | Email gate + transcript download | Done — email gate, session tokens, transcript download |
 
 ---
 
-## Immediate next step: Phase 7 — Email gate + transcript download
+## All phases complete as of 2026-06-18
+
+## Phase 7 — Email gate + transcript download (done)
 
 ### Feature A: Email gate
 
